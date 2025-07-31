@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Компјутерски Технологии - Е-книга</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .book-header {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .book-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .book-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        .chapter {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .chapter.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .chapter-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #34495e;
+        }
+
+        .chapter-content h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        .chapter-content p {
+            margin-bottom: 15px;
+        }
+
+        .chapter-content ul {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        .chapter-content li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #55efc4, #00b894);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .chapter-nav button {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .chapter-nav button:hover {
+            background: #2980b9;
+        }
+
+        .chapter-nav button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .toc {
+            text-align: center;
+        }
+
+        .toc-item {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toc-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 768px) {
+            .book-title {
+                font-size: 2rem;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="book-header">
+            <h1 class="book-title">📚 Техничко образование и информатика 7 одд.</h1>
+            <p class="book-subtitle">материјали за учење</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p id="progressText">Содржина</p>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn active" onclick="showChapter(0)">📖 Содржина</button>
+            <button class="nav-btn" onclick="showChapter(1)">💻 Компјутерски технологии</button>
+            <button class="nav-btn" onclick="showChapter(2)">📝 Работа со текст во Word</button>
+        </div>
+
+        <div class="content-area">
+            <!-- Table of Contents -->
+            <div class="chapter active" id="chapter0">
+                <h2 class="chapter-title">📖 Содржина</h2>
+                <div class="toc">
+                    <a href="#" class="toc-item" onclick="showChapter(1)">
+                        💻 Поглавје 1: Компјутерски технологии
+                    </a>
+                    <div style="margin-left: 20px; margin-top: 10px;">
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 1)" style="font-size: 0.9rem; padding: 10px;">
+                            🦠 1.1 Штетни компјутерски програми
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 2)" style="font-size: 0.9rem; padding: 10px;">
+                            📄 1.2 Лиценциран софтвер
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 3)" style="font-size: 0.9rem; padding: 10px;">
+                            🤖 1.3 Вештачка интелигенција
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 4)" style="font-size: 0.9rem; padding: 10px;">
+                            🖥️ 1.4 Историски развој на компјутерите
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 5)" style="font-size: 0.9rem; padding: 10px;">
+                            🎯 1.5 Провери го своето знаење
+                        </a>
+                    </div>
+                    
+                    <a href="#" class="toc-item" onclick="showChapter(2)">
+                        📝 Поглавје 2: Работа со текст во Word
+                    </a>
+                    <div style="margin-left: 20px; margin-top: 10px;">
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 1)" style="font-size: 0.9rem; padding: 10px;">
+                            📄 2.1 Работа со пасуси
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 2)" style="font-size: 0.9rem; padding: 10px;">
+                            🖼️ 2.2 Графички објекти
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 3)" style="font-size: 0.9rem; padding: 10px;">
+                            ⚙️ 2.3 Подесување параметри на страница
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 4)" style="font-size: 0.9rem; padding: 10px;">
+                            🖨️ 2.4 Подготовка за печатење
+                        </a>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3>💡 За оваа е-книга</h3>
+                    <p>Оваа е-книга ги покрива клучните теми од областа на технологиите. Секое поглавје содржи детални објаснувања, примери и практични совети. Можете лесно да додавате нови поглавја и подпоглавја.</p>
+                </div>
+            </div>
+
+            <!-- Chapter 1: Computer Technologies -->
+            <div class="chapter" id="chapter1">
+                <h2 class="chapter-title">💻 Компјутерски технологии</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>💡 Добредојдовте во светот на компјутерските технологии</h3>
+                        <p>Ова поглавје ги покрива основните концепти од областа на компјутерските технологии. Тука ќе научите за штетните програми, лиценцирањето на софтвер, вештачката интелигенција и историскиот развој на компјутерите.</p>
+                    </div>
+
+                    <h3>Подпоглавја:</h3>
+                    <div class="toc">
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 1)" style="font-size: 0.9rem; padding: 10px;">
+                            🦠 1.1 Штетни компјутерски програми
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 2)" style="font-size: 0.9rem; padding: 10px;">
+                            📄 1.2 Лиценциран софтвер
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 3)" style="font-size: 0.9rem; padding: 10px;">
+                            🤖 1.3 Вештачка интелигенција
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 4)" style="font-size: 0.9rem; padding: 10px;">
+                            🖥️ 1.4 Историски развој на компјутерите
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(1, 5)" style="font-size: 0.9rem; padding: 10px;">
+                            🎯 1.5 Провери го своето знаење
+                        </a>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showChapter(0)">← Содржина</button>
+                    <button onclick="showSubChapter(1, 1)">Прво подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 1.1: Malicious Software -->
+            <div class="chapter" id="subchapter1-1">
+                <h2 class="chapter-title">🦠 1.1 Штетни компјутерски програми</h2>
+                <div class="chapter-content">
+                    <div class="warning-box">
+                        <h3>⚠️ Важно предупредување</h3>
+                        <p>Штетните програми претставуваат сериозна закана за безбедноста на вашите податоци и системи.</p>
+                    </div>
+
+                    <h3>Што се штетни компјутерски програми?</h3>
+                    <p>Штетни компјутерски програми се посебни видови на софтвер кои се направени за да му наштетат на компјутерот, да украдат информации или да направат некаква штета на корисникот. Се нарекуваат и злонамерен софтвер или со англиски збор – малвер (malware).</p>
+
+                    <h3>Како доаѓаат до нашиот компјутер?</h3>
+                    <p>Штетните програми најчесто доаѓаат преку:</p>
+                    <ul>
+                        <li>📧 е-пошта со чудни прилози</li>
+                        <li>🌐 небезбедни веб-страници</li>
+                        <li>📥 преземање на бесплатни програми од интернет</li>
+                        <li>💾 USB-уреди од други компјутери</li>
+                        <li>📲 небезбедни апликации на телефони и таблети</li>
+                    </ul>
+
+                    <h3>Типови на штетни програми:</h3>
+                    <ul>
+                        <li><strong>Вируси</strong> - се прикачуваат на други програми и се шират кога програмата се извршува</li>
+                        <li><strong>Црви</strong> - се шират самостојно преку мрежата без потреба од друга програма</li>
+                        <li><strong>Тројански коњи</strong> - се маскираат како легитимни програми но содржат штетен код</li>
+                        <li><strong>Рансомвер</strong> - ги енкриптира датотеките и бара откуп за нивно ослободување</li>
+                        <li><strong>Шпионски софтвер</strong> - тајно собира информации за корисникот</li>
+                        <li><strong>Адвер</strong> - прикажува непожелни реклами</li>
+                    </ul>
+
+                    <h3>Заштита од штетни програми:</h3>
+                    <ul>
+                        <li>Користете антивирусен софтвер и редовно го ажурирајте</li>
+                        <li>Не отворајте сомнителни е-мејл прилози</li>
+                        <li>Преземајте софтвер само од доверливи извори</li>
+                        <li>Редовно правете резервни копии на важните податоци</li>
+                        <li>Одржувајте го оперативниот систем ажуриран</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <h3>💡 Совет</h3>
+                        <p>Најдобрата заштита е превенцијата. Бидете претпазливи при сурфање на интернет и отворање на непознати датотеки.</p>
+                    </div>
+
+                    <h3>🎯 Вежби</h3>
+                    
+                    <div style="background: #f8f9fa; color: #2c3e50; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;">
+                        <h3>🎮 Вежба 1: Игра за поврзување - Штетни програми</h3>
+                        <p>Поврзете ги штетните програми со нивните дефиниции. Влечете ги термините од лево кон соодветните дефиниции од десно.</p>
+                        
+                        <div id="matchingGame" style="margin-top: 20px;">
+                            <div style="display: flex; gap: 30px; justify-content: space-between;">
+                                <!-- Left column - Terms -->
+                                <div style="flex: 1;">
+                                    <h4 style="text-align: center; margin-bottom: 15px; color: #2c3e50;">🦠 Штетни програми</h4>
+                                    <div id="terms" style="display: flex; flex-direction: column; gap: 10px;">
+                                        <div class="draggable-term" draggable="true" data-term="virus" style="background: #e74c3c; color: white; padding: 12px; border-radius: 8px; cursor: move; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                            🦠 Вирус
+                                        </div>
+                                        <div class="draggable-term" draggable="true" data-term="ransomware" style="background: #e67e22; color: white; padding: 12px; border-radius: 8px; cursor: move; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                            🔒 Рансомвер
+                                        </div>
+                                        <div class="draggable-term" draggable="true" data-term="spyware" style="background: #9b59b6; color: white; padding: 12px; border-radius: 8px; cursor: move; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                            🕵️ Шпионски софтвер
+                                        </div>
+                                        <div class="draggable-term" draggable="true" data-term="trojan" style="background: #34495e; color: white; padding: 12px; border-radius: 8px; cursor: move; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                            🐴 Тројанец
+                                        </div>
+                                        <div class="draggable-term" draggable="true" data-term="worm" style="background: #27ae60; color: white; padding: 12px; border-radius: 8px; cursor: move; text-align: center; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                            🐛 Црв
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right column - Definitions -->
+                                <div style="flex: 1;">
+                                    <h4 style="text-align: center; margin-bottom: 15px; color: #2c3e50;">📝 Дефиниции</h4>
+                                    <div id="definitions" style="display: flex; flex-direction: column; gap: 10px;">
+                                        <div class="drop-zone" data-answer="spyware" style="border: 2px dashed #bdc3c7; padding: 12px; border-radius: 8px; min-height: 50px; background: #ecf0f1; display: flex; align-items: center; text-align: center;">
+                                            Тајно ги снима твоите активности
+                                        </div>
+                                        <div class="drop-zone" data-answer="worm" style="border: 2px dashed #bdc3c7; padding: 12px; border-radius: 8px; min-height: 50px; background: #ecf0f1; display: flex; align-items: center; text-align: center;">
+                                            Се шири без да треба корисникот нешто да отвори
+                                        </div>
+                                        <div class="drop-zone" data-answer="virus" style="border: 2px dashed #bdc3c7; padding: 12px; border-radius: 8px; min-height: 50px; background: #ecf0f1; display: flex; align-items: center; text-align: center;">
+                                            Се лепи на други програми и ги оштетува
+                                        </div>
+                                        <div class="drop-zone" data-answer="trojan" style="border: 2px dashed #bdc3c7; padding: 12px; border-radius: 8px; min-height: 50px; background: #ecf0f1; display: flex; align-items: center; text-align: center;">
+                                            Се маскира како корисна програма, а всушност е штетна
+                                        </div>
+                                        <div class="drop-zone" data-answer="ransomware" style="border: 2px dashed #bdc3c7; padding: 12px; border-radius: 8px; min-height: 50px; background: #ecf0f1; display: flex; align-items: center; text-align: center;">
+                                            Ги заклучува податоците и бара пари
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button onclick="resetGame()" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-right: 10px;">
+                                    🔄 Ресетирај игра
+                                </button>
+                                <button onclick="checkAnswers()" style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+                                    ✅ Провери одговори
+                                </button>
+                            </div>
+
+                            <div id="gameResult" style="margin-top: 15px; text-align: center; font-weight: bold; font-size: 1.1rem;"></div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; color: #2c3e50; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;">
+                        <h3>📝 Вежба 2: Активност за дополнување</h3>
+                        <p>Дополнете ги речениците со избирање на правилниот збор од падачкото мени.</p>
+                        
+                        <div style="margin: 20px 0;">
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <strong>Напредок: <span id="fillScoreText">0/4 точни одговори</span></strong>
+                                <div style="width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px; overflow: hidden; margin: 10px 0;">
+                                    <div id="fillProgressFill" style="height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); width: 0%; transition: width 0.5s ease;"></div>
+                                </div>
+                            </div>
+
+                            <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0; font-size: 1.1rem; line-height: 1.8;">
+                                <span>Штетните програми се софтвер кој им штети на нашите </span>
+                                <select id="fillDropdown1" onchange="checkFillAnswer(1)" style="background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 15px; font-weight: bold; cursor: pointer; min-width: 120px;">
+                                    <option value="">-- Избери --</option>
+                                    <option value="компјутери">компјутери</option>
+                                    <option value="телефони">телефони</option>
+                                    <option value="автомобили">автомобили</option>
+                                    <option value="телевизори">телевизори</option>
+                                </select>
+                                <span>.</span>
+                            </div>
+
+                            <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0; font-size: 1.1rem; line-height: 1.8;">
+                                <span>Еден вид штетна програма што се претставува како корисна е </span>
+                                <select id="fillDropdown2" onchange="checkFillAnswer(2)" style="background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 15px; font-weight: bold; cursor: pointer; min-width: 120px;">
+                                    <option value="">-- Избери --</option>
+                                    <option value="антивирус">антивирус</option>
+                                    <option value="тројански коњ">тројански коњ</option>
+                                    <option value="оперативен систем">оперативен систем</option>
+                                    <option value="веб прелистувач">веб прелистувач</option>
+                                </select>
+                                <span>.</span>
+                            </div>
+
+                            <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0; font-size: 1.1rem; line-height: 1.8;">
+                                <span>Програмата што помага да се заштитиме од вируси се вика </span>
+                                <select id="fillDropdown3" onchange="checkFillAnswer(3)" style="background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 15px; font-weight: bold; cursor: pointer; min-width: 120px;">
+                                    <option value="">-- Избери --</option>
+                                    <option value="вирус">вирус</option>
+                                    <option value="црв">црв</option>
+                                    <option value="антивирус">антивирус</option>
+                                    <option value="рансомвер">рансомвер</option>
+                                </select>
+                                <span>.</span>
+                            </div>
+
+                            <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0; font-size: 1.1rem; line-height: 1.8;">
+                                <select id="fillDropdown4" onchange="checkFillAnswer(4)" style="background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 15px; font-weight: bold; cursor: pointer; min-width: 120px;">
+                                    <option value="">-- Избери --</option>
+                                    <option value="Вирус">Вирус</option>
+                                    <option value="Црв">Црв</option>
+                                    <option value="Антивирус">Антивирус</option>
+                                    <option value="Тројанец">Тројанец</option>
+                                </select>
+                                <span> е програма која сама се шири без наша дозвола.</span>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button onclick="checkAllFillAnswers()" style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-right: 10px;">
+                                    ✅ Провери сѐ
+                                </button>
+                                <button onclick="resetFillActivity()" style="background: #e67e22; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+                                    🔄 Почни одново
+                                </button>
+                            </div>
+
+                            <div id="fillResult" style="margin-top: 15px; text-align: center; font-weight: bold; font-size: 1.1rem; display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showChapter(1)">← Главно поглавје</button>
+                    <button onclick="showSubChapter(1, 2)">Следно подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 1.2: Licensed Software -->
+            <div class="chapter" id="subchapter1-2">
+                <h2 class="chapter-title">📄 1.2 Лиценциран софтвер</h2>
+                <div class="chapter-content">
+                    <div class="info-box">
+                        <h3>📋 Што е лиценциран софтвер?</h3>
+                        <p>Лиценциран софтвер е програма која доаѓа со дозвола за користење. Кога користиме софтвер, ние прифаќаме одредени правила од неговиот творец. Творците одлучуваат како ќе биде користен софтверот и под кои услови.</p>
+                    </div>
+
+                    <h3>Видови лиценци за софтвер</h3>
+                    
+                    <h3>1. Freeware (Бесплатен софтвер)</h3>
+                    <ul>
+                        <li>Овој софтвер е целосно бесплатен за користење.</li>
+                        <li>Не можеш да го менуваш кодот.</li>
+                        <li><strong>Пример:</strong> Skype, Acrobat Reader.</li>
+                    </ul>
+
+                    <h3>2. Shareware (Пробна верзија)</h3>
+                    <ul>
+                        <li>Овој софтвер можеш да го користиш некое време бесплатно, а потоа треба да платиш.</li>
+                        <li>На пример: игра или програма што ти дозволува да ја пробаш 30 дена.</li>
+                        <li><strong>Пример:</strong> WinRAR, некои антивируси.</li>
+                    </ul>
+
+                    <h3>3. Open-Source (Отворен код)</h3>
+                    <ul>
+                        <li>Овој софтвер е бесплатен и можеш да видиш како е направен.</li>
+                        <li>Дозволено е да го менуваш, да додаваш свои идеи и да го споделиш со другите.</li>
+                        <li><strong>Пример:</strong> Mozilla Firefox, LibreOffice, Linux.</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <h3>💡 Зошто е важно да ги знаеш овие лиценци?</h3>
+                        <ul>
+                            <li>Знаеш кои програми можеш безбедно да ги користиш.</li>
+                            <li>Си свесен кога треба да платиш.</li>
+                            <li>Разбираш кои програми можеш да ги менуваш или споделиш со пријатели.</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #f8f9fa; color: #2c3e50; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #3498db;">
+                        <h3>🎮 Кратка активност</h3>
+                        <p><strong>Замисли дека имаш своја игра.</strong></p>
+                        <p>Напиши кое лиценцирање би го избрал за неа и објасни зошто. (Freeware, Shareware или Open-source)</p>
+                        <p><strong>Напиши на падлетот подолу.</strong></p>
+                        
+                        <div style="text-align: center; margin: 20px 0;">
+                            <a href="https://padlet.com/zim_negotino/padlet-2vqg68j2fm5o" target="_blank" 
+                               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                      color: white; text-decoration: none; padding: 15px 30px; border-radius: 10px; 
+                                      font-size: 1.1rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+                                      transition: all 0.3s ease;">
+                                📝 Отвори Padlet за да напишеш одговор
+                            </a>
+                        </div>
+                        
+                        <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #27ae60;">
+                            <h4 style="color: #27ae60; margin-bottom: 10px;">💡 Помош за размислување:</h4>
+                            <ul style="margin: 0; padding-left: 20px; color: #2c3e50;">
+                                <li><strong>Freeware:</strong> Ако сакаш сите да можат бесплатно да ја играат</li>
+                                <li><strong>Shareware:</strong> Ако сакаш да дадеш пробна верзија, а потоа да наплатуваш</li>
+                                <li><strong>Open-source:</strong> Ако сакаш другите да можат да ја подобруваат играта</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(1, 1)">← Претходно подпоглавје</button>
+                    <button onclick="showSubChapter(1, 3)">Следно подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 1.3: Artificial Intelligence -->
+            <div class="chapter" id="subchapter1-3">
+                <h2 class="chapter-title">🤖 1.3 Вештачка интелигенција</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>🧠 Што е вештачка интелигенција?</h3>
+                        <p>Вештачка интелигенција (ВИ) е технологија со која компјутерите учат да решаваат задачи слично како луѓето. Тоа значи дека тие можат да препознаваат слики, да разбираат говор или да играат игри без да им кажеме сѐ точно.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>🌟 Каде се користи вештачката интелигенција?</h3>
+                        <p>Вештачката интелигенција се користи во телефони, роботи, видео-игри, па дури и во автомобилите кои возат сами. Таа ни помага побрзо да добиеме информации, да учиме нови работи и да решаваме сложени проблеми.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <h3>⚠️ Важна порака</h3>
+                        <p>Важно е да се користи паметно и безбедно, за да ни помага да го направиме светот подобро место!</p>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(1, 2)">← Претходно подпоглавје</button>
+                    <button onclick="showSubChapter(1, 4)">Следно подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 1.5: Quiz -->
+            <div class="chapter" id="subchapter1-5">
+                <h2 class="chapter-title">🎯 1.5 Провери го своето знаење</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>🧠 Квиз за компјутерски технологии</h3>
+                        <p>Време е да го тестирате вашето знаење! Овој квиз содржи 15 прашања од сите теми што ги изучивте во ова поглавје. Одговорете внимателно и проверете колку добро ги знаете компјутерските технологии.</p>
+                    </div>
+
+                    <div style="text-align: center; margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 10px; border: 2px solid #3498db;">
+                        <h3 style="color: #2c3e50; margin-bottom: 10px;">📊 Напредок на квизот</h3>
+                        <div style="font-size: 1.1rem; font-weight: bold; color: #3498db; margin-bottom: 10px;">
+                            <span id="quizProgress">0/15 прашања одговорени</span>
+                        </div>
+                        <div style="width: 100%; height: 12px; background: #ecf0f1; border-radius: 6px; overflow: hidden;">
+                            <div id="quizProgressBar" style="height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); width: 0%; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">1. Кој се смета за првиот електронски компјутер?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q1" value="a" style="margin-right: 10px;"> a) Apple I
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q1" value="b" style="margin-right: 10px;"> b) ENIAC
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q1" value="c" style="margin-right: 10px;"> c) IBM PC
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q1" value="d" style="margin-right: 10px;"> d) Macintosh
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">2. Која штетна програма се маскира како корисна програма?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q2" value="a" style="margin-right: 10px;"> a) Вирус
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q2" value="b" style="margin-right: 10px;"> b) Тројански коњ
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q2" value="c" style="margin-right: 10px;"> c) Црв
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q2" value="d" style="margin-right: 10px;"> d) Рансомвер
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 - Fill in -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">3. Дополни: Компјутерите од втората генерација користеле ___________.</h4>
+                        <input type="text" id="q3" placeholder="Внеси одговор..." style="width: 100%; padding: 10px; border: 2px solid #3498db; border-radius: 5px; font-size: 1rem;">
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">4. Кој тип лиценца дозволува бесплатно користење и менување на софтверот?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q4" value="a" style="margin-right: 10px;"> a) Freeware
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q4" value="b" style="margin-right: 10px;"> b) Open-Source
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q4" value="c" style="margin-right: 10px;"> c) Shareware
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q4" value="d" style="margin-right: 10px;"> d) Commercial
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 - Matching -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">5. Поврзи ги генерациите компјутери со нивните карактеристики:</h4>
+                        <div style="display: flex; gap: 30px; margin-top: 20px;">
+                            <div style="flex: 1;">
+                                <h5 style="text-align: center; color: #3498db;">Генерации</h5>
+                                <div id="generations" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div class="match-item" draggable="true" data-match="first" style="background: #e74c3c; color: white; padding: 10px; border-radius: 5px; cursor: move; text-align: center;">
+                                        Прва генерација
+                                    </div>
+                                    <div class="match-item" draggable="true" data-match="second" style="background: #f39c12; color: white; padding: 10px; border-radius: 5px; cursor: move; text-align: center;">
+                                        Втора генерација
+                                    </div>
+                                    <div class="match-item" draggable="true" data-match="fourth" style="background: #9b59b6; color: white; padding: 10px; border-radius: 5px; cursor: move; text-align: center;">
+                                        Четврта генерација
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="flex: 1;">
+                                <h5 style="text-align: center; color: #3498db;">Карактеристики</h5>
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div class="match-zone" data-answer="first" style="border: 2px dashed #bdc3c7; padding: 10px; border-radius: 5px; min-height: 40px; background: #ecf0f1; text-align: center; display: flex; align-items: center; justify-content: center;">
+                                        Електронски лампи
+                                    </div>
+                                    <div class="match-zone" data-answer="second" style="border: 2px dashed #bdc3c7; padding: 10px; border-radius: 5px; min-height: 40px; background: #ecf0f1; text-align: center; display: flex; align-items: center; justify-content: center;">
+                                        Транзистори
+                                    </div>
+                                    <div class="match-zone" data-answer="fourth" style="border: 2px dashed #bdc3c7; padding: 10px; border-radius: 5px; min-height: 40px; background: #ecf0f1; text-align: center; display: flex; align-items: center; justify-content: center;">
+                                        Микрочипови
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">6. Колку електронски лампи имал ENIAC?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q6" value="a" style="margin-right: 10px;"> a) 15.000
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q6" value="b" style="margin-right: 10px;"> b) 18.000
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q6" value="c" style="margin-right: 10px;"> c) 20.000
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q6" value="d" style="margin-right: 10px;"> d) 25.000
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 7 - True/False -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">7. Точно или неточно: Рансомвер ги заклучува податоците и бара пари за нивно ослободување.</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q7" value="true" style="margin-right: 10px;"> Точно
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q7" value="false" style="margin-right: 10px;"> Неточно
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 8 - Fill in -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">8. Како се викаше првиот персонален компјутер произведен во 1975 година?</h4>
+                        <input type="text" id="q8" placeholder="Внеси одговор..." style="width: 100%; padding: 10px; border: 2px solid #3498db; border-radius: 5px; font-size: 1rem;">
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">9. Кој тип лиценца дозволува пробно користење, а потоа бара плаќање?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q9" value="a" style="margin-right: 10px;"> a) Freeware
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q9" value="b" style="margin-right: 10px;"> b) Shareware
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q9" value="c" style="margin-right: 10px;"> c) Open-Source
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q9" value="d" style="margin-right: 10px;"> d) Commercial
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 10 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">10. Што е вештачка интелигенција?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q10" value="a" style="margin-right: 10px;"> a) Вид антивирус
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q10" value="b" style="margin-right: 10px;"> b) Технологија со која компјутерите учат да решаваат задачи
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q10" value="c" style="margin-right: 10px;"> c) Штетна програма
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q10" value="d" style="margin-right: 10px;"> d) Оперативен систем
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 11 - True/False -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">11. Точно или неточно: Црвите се шират самостојно преку мрежата без потреба од друга програма.</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q11" value="true" style="margin-right: 10px;"> Точно
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q11" value="false" style="margin-right: 10px;"> Неточно
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 12 - Fill in -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">12. На колку минути се расипувал ENIAC?</h4>
+                        <input type="text" id="q12" placeholder="Внеси број..." style="width: 100%; padding: 10px; border: 2px solid #3498db; border-radius: 5px; font-size: 1rem;">
+                    </div>
+
+                    <!-- Question 13 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">13. Кој од следниве е пример за Open-Source софтвер?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q13" value="a" style="margin-right: 10px;"> a) Microsoft Word
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q13" value="b" style="margin-right: 10px;"> b) Mozilla Firefox
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q13" value="c" style="margin-right: 10px;"> c) Adobe Photoshop
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q13" value="d" style="margin-right: 10px;"> d) Windows 11
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 14 -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">14. Колку тежел ENIAC?</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q14" value="a" style="margin-right: 10px;"> a) 25 тони
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q14" value="b" style="margin-right: 10px;"> b) 28 тони
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q14" value="c" style="margin-right: 10px;"> c) 30 тони
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q14" value="d" style="margin-right: 10px;"> d) 35 тони
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 15 - True/False -->
+                    <div style="background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 20px; margin: 15px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">15. Точно или неточно: Компјутерите од третата генерација користеле интегрално коло.</h4>
+                        <div style="margin-left: 20px;">
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q15" value="true" style="margin-right: 10px;"> Точно
+                            </label>
+                            <label style="display: block; margin: 8px 0; cursor: pointer;">
+                                <input type="radio" name="q15" value="false" style="margin-right: 10px;"> Неточно
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Controls -->
+                    <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <button onclick="checkQuiz()" style="background: #27ae60; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                            ✅ Провери резултати
+                        </button>
+                        <button onclick="resetQuiz()" style="background: #e74c3c; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                            🔄 Почни одново
+                        </button>
+                    </div>
+
+                    <!-- Quiz Results -->
+                    <div id="quizResults" style="display: none; margin: 20px 0; padding: 25px; border-radius: 10px; border: 3px solid #3498db;">
+                        <h3 style="text-align: center; color: #2c3e50; margin-bottom: 15px;">🎯 Резултати од квизот</h3>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div id="quizScore" style="font-size: 1.3rem; font-weight: bold; color: #2c3e50; margin-bottom: 10px;"></div>
+                            <div id="quizGrade" style="font-size: 1.5rem; font-weight: bold; color: #3498db; margin-bottom: 15px;"></div>
+                            <div id="quizFeedback" style="font-size: 1.1rem; color: #34495e; line-height: 1.6;"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>💡 Совети за подобри резултати</h3>
+                        <ul>
+                            <li>Прочитајте ги сите поглавја внимателно пред да го решавате квизот</li>
+                            <li>Обрнете посебно внимание на важните датуми и бројки</li>
+                            <li>Запомнете ги карактеристиките на секоја генерација компјутери</li>
+                            <li>Разберете ги разликите меѓу различните типови штетни програми</li>
+                            <li>Знајте ги основните типови лиценци за софтвер</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(1, 4)">← Претходно подпоглавје</button>
+                    <button onclick="showChapter(1)">Кон главно поглавје</button>
+                </div>
+            </div>
+
+            <!-- Chapter 2: Working with Text in Word -->
+            <div class="chapter" id="chapter2">
+                <h2 class="chapter-title">📝 Работа со текст во Word</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>📝 Добредојдовте во светот на Microsoft Word</h3>
+                        <p>Ова поглавје ги покрива основните и напредните техники за работа со текст во Microsoft Word. Тука ќе научите како да форматирате пасуси, да работите со графички објекти, да подесувате параметри на страницата и да се подготвите за печатење.</p>
+                    </div>
+
+                    <h3>Подпоглавја:</h3>
+                    <div class="toc">
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 1)" style="font-size: 0.9rem; padding: 10px;">
+                            📄 2.1 Работа со пасуси
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 2)" style="font-size: 0.9rem; padding: 10px;">
+                            🖼️ 2.2 Графички објекти
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 3)" style="font-size: 0.9rem; padding: 10px;">
+                            ⚙️ 2.3 Подесување параметри на страница
+                        </a>
+                        <a href="#" class="toc-item" onclick="showSubChapter(2, 4)" style="font-size: 0.9rem; padding: 10px;">
+                            🖨️ 2.4 Подготовка за печатење
+                        </a>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>💡 Зошто е важно да знаете да работите со Word?</h3>
+                        <p>Microsoft Word е еден од најкористените програми за обработка на текст во светот. Овладувањето на неговите функции ќе ви помогне да создавате професионални документи, извештаи, писма и многу повеќе.</p>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showChapter(0)">← Содржина</button>
+                    <button onclick="showSubChapter(2, 1)">Прво подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 2.1: Working with Paragraphs -->
+            <div class="chapter" id="subchapter2-1">
+                <h2 class="chapter-title">📄 2.1 Работа со пасуси</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>📝 Што е пасус?</h3>
+                        <p>Пасусот е основна единица на текстот која содржи една главна идеја. Во Word, секој пасус завршува со притискање на Enter копчето.</p>
+                    </div>
+
+                    <h3>Форматирање на пасуси</h3>
+                    <ul>
+                        <li><strong>Порамнување:</strong> Лево, десно, центрирано или двострано порамнување</li>
+                        <li><strong>Вовлекување:</strong> Поместување на првиот ред или целиот пасус</li>
+                        <li><strong>Растојание:</strong> Меѓу редовите и меѓу пасусите</li>
+                        <li><strong>Табулатори:</strong> За прецизно позиционирање на текстот</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h3>🎯 Како да форматирате пасус:</h3>
+                        <ol>
+                            <li>Селектирајте го пасусот што сакате да го форматирате</li>
+                            <li>Одете во таб "Home" во лентата</li>
+                            <li>Користете ги копчињата за порамнување</li>
+                            <li>За повеќе опции, кликнете на стрелката во групата "Paragraph"</li>
+                        </ol>
+                    </div>
+
+                    <h3>Видови порамнување:</h3>
+                    <ul>
+                        <li><strong>Лево порамнување:</strong> Текстот е порамнет кон левиот маргин</li>
+                        <li><strong>Центрирано:</strong> Текстот е центриран меѓу маргините</li>
+                        <li><strong>Десно порамнување:</strong> Текстот е порамнет кон десниот маргин</li>
+                        <li><strong>Двострано порамнување:</strong> Текстот е порамнет и кон левиот и кон десниот маргин</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h3>⚠️ Важни совети:</h3>
+                        <ul>
+                            <li>Користете двострано порамнување за професионални документи</li>
+                            <li>Центрираното порамнување е добро за наслови</li>
+                            <li>Внимавајте на растојанието меѓу редовите - не треба да биде премногу големо или мало</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showChapter(2)">← Главно поглавје</button>
+                    <button onclick="showSubChapter(2, 2)">Следно подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 2.2: Graphic Objects -->
+            <div class="chapter" id="subchapter2-2">
+                <h2 class="chapter-title">🖼️ 2.2 Графички објекти</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>🎨 Што се графички објекти?</h3>
+                        <p>Графичките објекти се визуелни елементи како слики, форми, табели, графикони и други објекти кои можат да се вметнат во Word документот за да го направат поинтересен и поинформативен.</p>
+                    </div>
+
+                    <h3>Типови графички објекти:</h3>
+                    <ul>
+                        <li><strong>Слики:</strong> Фотографии и илустрации од компјутерот или интернет</li>
+                        <li><strong>Форми:</strong> Геометриски форми, стрелки, линии</li>
+                        <li><strong>SmartArt:</strong> Дијаграми и графички претстави</li>
+                        <li><strong>Графикони:</strong> За прикажување на податоци</li>
+                        <li><strong>Табели:</strong> За организирање на информации</li>
+                        <li><strong>WordArt:</strong> Декоративен текст</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h3>📷 Како да вметнете слика:</h3>
+                        <ol>
+                            <li>Поставете го курсорот каде сакате да ја вметнете сликата</li>
+                            <li>Одете во таб "Insert"</li>
+                            <li>Кликнете на "Pictures"</li>
+                            <li>Изберете "This Device" за слика од компјутерот или "Online Pictures" за слика од интернет</li>
+                            <li>Селектирајте ја сликата и кликнете "Insert"</li>
+                        </ol>
+                    </div>
+
+                    <h3>Форматирање на слики:</h3>
+                    <ul>
+                        <li><strong>Големина:</strong> Менување на ширината и висината</li>
+                        <li><strong>Позиција:</strong> Поместување низ документот</li>
+                        <li><strong>Обвивање на текст:</strong> Како текстот се распоредува околу сликата</li>
+                        <li><strong>Ефекти:</strong> Сенки, рефлексии, рамки</li>
+                        <li><strong>Корекции:</strong> Осветленост, контраст, боја</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h3>⚠️ Совети за работа со слики:</h3>
+                        <ul>
+                            <li>Користете слики со висока резолуција за подобар квалитет</li>
+                            <li>Внимавајте на авторските права кога користите слики од интернет</li>
+                            <li>Компресирајте ги сликите за да го намалите размерот на документот</li>
+                            <li>Користете соодветно обвивање на текст за подобар изглед</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(2, 1)">← Претходно подпоглавје</button>
+                    <button onclick="showSubChapter(2, 3)">Следно подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 2.3: Page Setup -->
+            <div class="chapter" id="subchapter2-3">
+                <h2 class="chapter-title">⚙️ 2.3 Подесување параметри на страница</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>📏 Зошто се важни параметрите на страницата?</h3>
+                        <p>Правилното подесување на параметрите на страницата е клучно за професионален изглед на документот и за правилно печатење. Овие подесувања влијаат на тоа како ќе изгледа вашиот документ на хартија.</p>
+                    </div>
+
+                    <h3>Основни параметри на страница:</h3>
+                    <ul>
+                        <li><strong>Маргини:</strong> Растојанието од работ на страницата до текстот</li>
+                        <li><strong>Ориентација:</strong> Портрет (вертикално) или пејзаж (хоризонтално)</li>
+                        <li><strong>Големина на хартија:</strong> A4, Letter, Legal, итн.</li>
+                        <li><strong>Колони:</strong> Поделба на текстот во повеќе колони</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h3>📐 Како да ги подесите параметрите:</h3>
+                        <ol>
+                            <li>Одете во таб "Layout"</li>
+                            <li>Во групата "Page Setup" ќе ги најдете основните опции</li>
+                            <li>За детални подесувања, кликнете на стрелката во долниот десен агол</li>
+                            <li>Ќе се отвори дијалог прозорец "Page Setup"</li>
+                            <li>Подесете ги параметрите според потребите</li>
+                        </ol>
+                    </div>
+
+                    <h3>Типови маргини:</h3>
+                    <ul>
+                        <li><strong>Нормални:</strong> 2.54 см од сите страни</li>
+                        <li><strong>Тесни:</strong> 1.27 см од сите страни</li>
+                        <li><strong>Умерени:</strong> 2.54 см горе/долу, 1.91 см лево/десно</li>
+                        <li><strong>Широки:</strong> 2.54 см горе/долу, 5.08 см лево/десно</li>
+                        <li><strong>Прилагодени:</strong> Можете сами да ги дефинирате</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h3>📋 Важни напомени:</h3>
+                        <ul>
+                            <li>За академски работи обично се користат нормални маргини</li>
+                            <li>За брошури може да користите тесни маргини</li>
+                            <li>Проверете ги барањата на вашата институција или организација</li>
+                            <li>Некои печатачи не можат да печатат до самиот раб на хартијата</li>
+                        </ul>
+                    </div>
+
+                    <h3>Заглавја и подножја:</h3>
+                    <p>Заглавјата и подножјата се делови од документот кои се појавуваат на врвот и дното на секоја страница:</p>
+                    <ul>
+                        <li><strong>Заглавје:</strong> Информации на врвот на страницата</li>
+                        <li><strong>Подножје:</strong> Информации на дното на страницата</li>
+                        <li>Може да содржат: број на страница, датум, наслов на документот, име на авторот</li>
+                    </ul>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(2, 2)">← Претходно подпоглавје</button>
+                    <button onclick="showSubChapter(2, 4)">Следно подпоглавје →</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 2.4: Print Preparation -->
+            <div class="chapter" id="subchapter2-4">
+                <h2 class="chapter-title">🖨️ 2.4 Подготовка за печатење</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>🖨️ Зошто е важна подготовката за печатење?</h3>
+                        <p>Правилната подготовка за печатење обезбедува дека вашиот документ ќе изгледа професионално на хартија и дека нема да имате проблеми при печатењето. Ова вклучува проверка на форматирањето, подесување на печатачот и преглед на документот.</p>
+                    </div>
+
+                    <h3>Чекори за подготовка:</h3>
+                    <ol>
+                        <li><strong>Преглед на документот:</strong> Проверете за грешки во текстот и форматирањето</li>
+                        <li><strong>Проверка на страниците:</strong> Користете Print Preview за да видите како ќе изгледа</li>
+                        <li><strong>Подесување на печатачот:</strong> Изберете правилен печатач и подесувања</li>
+                        <li><strong>Избор на хартија:</strong> Подесете го типот и големината на хартијата</li>
+                        <li><strong>Печатење:</strong> Изберете колку копии сакате и кои страници</li>
+                    </ol>
+
+                    <div class="info-box">
+                        <h3>👁️ Како да користите Print Preview:</h3>
+                        <ol>
+                            <li>Притиснете Ctrl+P или одете во File > Print</li>
+                            <li>На десната страна ќе видите преглед на документот</li>
+                            <li>Користете ги стрелките за да се движите низ страниците</li>
+                            <li>Проверете дали сѐ изгледа како што сакате</li>
+                            <li>Ако треба, вратете се назад и направете измени</li>
+                        </ol>
+                    </div>
+
+                    <h3>Опции за печатење:</h3>
+                    <ul>
+                        <li><strong>Број на копии:</strong> Колку примероци сакате да испечатите</li>
+                        <li><strong>Опсег на страници:</strong> Сите страници, тековна страница или одредени страници</li>
+                        <li><strong>Двострано печатење:</strong> Печатење на двете страни од хартијата</li>
+                        <li><strong>Квалитет на печатење:</strong> Нормален, висок квалитет или брз режим</li>
+                        <li><strong>Боја или црно-бело:</strong> Зависно од потребите и трошоците</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h3>💡 Совети за успешно печатење:</h3>
+                        <ul>
+                            <li>Секогаш проверете го Print Preview пред печатење</li>
+                            <li>Проверете дали имате доволно мастило или тонер</li>
+                            <li>Користете квалитетна хартија за важни документи</li>
+                            <li>За големи документи, прво испечатете една страница за тест</li>
+                            <li>Зачувајте го документот пред печатење</li>
+                        </ul>
+                    </div>
+
+                    <h3>Чести проблеми и решенија:</h3>
+                    <ul>
+                        <li><strong>Текстот е отсечен:</strong> Проверете ги маргините и големината на хартијата</li>
+                        <li><strong>Сликите не се печатат:</strong> Проверете ги подесувањата за печатење на слики</li>
+                        <li><strong>Бавно печатење:</strong> Намалете го квалитетот или користете брз режим</li>
+                        <li><strong>Неправилни бои:</strong> Калибрирајте го мониторот и печатачот</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h3>🌱 Еколошки совети:</h3>
+                        <ul>
+                            <li>Печатете само кога е неопходно</li>
+                            <li>Користете двострано печатење за да заштедите хартија</li>
+                            <li>Прегледајте го документот на екран пред печатење</li>
+                            <li>Рециклирајте ја употребената хартија</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(2, 3)">← Претходно подпоглавје</button>
+                    <button onclick="showChapter(2)">Кон главно поглавје</button>
+                </div>
+            </div>
+
+            <!-- Subchapter 1.4: Computer History -->
+            <div class="chapter" id="subchapter1-4">
+                <h2 class="chapter-title">🖥️ 1.4 Историски развој на компјутерите</h2>
+                <div class="chapter-content">
+                    <div class="highlight-box">
+                        <h3>⏳ Прва генерација компјутери</h3>
+                        <p>За прв електронски компјутер се смета ENIAC.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <h3>💡 ENIAC - Првиот електронски компјутер</h3>
+                        <div style="display: flex; gap: 30px; align-items: flex-start; margin: 20px 0;">
+                            <div style="flex: 1;">
+                                <p><strong>ENIAC</strong> имал вградени <strong>18.000 електронски ламби</strong>, зафаќал простор од <strong>150 м квадратни</strong>, тежел <strong>30 тони</strong>, постојано работел - не се исклучувал и се расипувал на секои <strong>7 минути</strong> и имал посебни уреди за ладење, поради преголемото загревање.</p>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <img src="https://cdn2.picryl.com/photo/1946/12/31/classic-shot-of-the-eniac-full-resolution-78a3bb-1024.jpg" alt="ENIAC компјутер" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                                <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">ENIAC - првиот електронски компјутер</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Карактеристики на првата генерација:</h3>
+                    <div style="display: flex; gap: 30px; align-items: flex-start; margin: 20px 0;">
+                        <div style="flex: 1;">
+                            <p>Компјутерите од првата генерација за обработка на податоци користеле <strong>електронски лампи</strong>.</p>
+                            <p>Тие биле <strong>огромни</strong>, зафаќале <strong>цели катови</strong> и трошеле <strong>многу електрична енергија</strong>, работеле <strong>бавно</strong> и помнеле <strong>малку податоци</strong>.</p>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/CK512AX_vs_standard_vacuum_tubes.jpg/1142px-CK512AX_vs_standard_vacuum_tubes.jpg" alt="Електронски лампи" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Електронски лампи - основни компоненти на првата генерација компјутери</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>🔧 Технички проблеми</h3>
+                        <p>Поради користењето на електронски лампи, овие компјутери имале сериозни проблеми:</p>
+                        <ul>
+                            <li>Често расипување на секои 7 минути</li>
+                            <li>Преголемо загревање што бараше специјално ладење</li>
+                            <li>Огромна потрошувачка на електрична енергија</li>
+                            <li>Потреба од постојана работа без исклучување</li>
+                        </ul>
+                    </div>
+
+                    <h3>Втора генерација:</h3>
+                    <div style="display: flex; gap: 30px; align-items: flex-start; margin: 20px 0;">
+                        <div style="flex: 1;">
+                            <p>Компјутерите од втората генерација користеле <strong>транзистори</strong>.</p>
+                            <p>Станале <strong>помали, поевтини</strong>, помалку се загревале и трошеле <strong>помалку енергија</strong>.</p>
+                            <p>Имале <strong>поголема меморија</strong> и работеле и до <strong>десетпати побрзо</strong>.</p>
+                            <p>Имале меморија слична на денешната, <strong>магнетен диск и печатач</strong>.</p>
+                            <p>Започнал и развојот на <strong>програмските јазици</strong>.</p>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Transistors_110.jpg" alt="Транзистори" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Транзистори - основни компоненти на втората генерација компјутери</p>
+                        </div>
+                    </div>
+
+                    <h3>Трета генерација:</h3>
+                    <p>Компјутерите од третата генерација користеле <strong>интегралното коло</strong>.</p>
+                    <p>Биле <strong>многу помали и побрзи</strong> од компјутерите од првата и од втората генерација.</p>
+                    <p>Користеле <strong>монитор и тастатура</strong>.</p>
+                    <p>За прв пат се појавил <strong>оперативен систем</strong> − програма што управувала со компјутерот.</p>
+
+                    <h3>Четврта генерација:</h3>
+                    <div style="display: flex; gap: 30px; align-items: flex-start; margin: 20px 0;">
+                        <div style="flex: 1;">
+                            <p>Во нив е вграден нов елемент − <strong>микрочип</strong>.</p>
+                            <p>Микрочипот е парче силициум на кое се спакувани <strong>милиони транзистори</strong> и други електронски елементи и може да извршуваат <strong>неколку милиони операции во секунда</strong>.</p>
+                            <p>Компјутерите во кои се вградени микрочиповите ги нарекуваме <strong>микро-компјутери</strong> т.е <strong>персонални компјутери</strong>.</p>
+                            <p>Првиот персонален компјутер (PC) е произведен <strong>во 1975 година во Америка</strong>.</p>
+                            <p>Бил направен од <strong>Стив Џобс и Стив Вознијак</strong> и се викал <strong>Apple I (Ејпл 1)</strong>.</p>
+                            <div style="text-align: center; margin: 20px 0;">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Apple_I.jpg" alt="Apple I компјутер" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                                <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Apple I - првиот персонален компјутер (1975)</p>
+                            </div>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <img src="https://i2.pickpik.com/photos/528/372/987/cpu-processor-electronics-computer-preview.jpg" alt="Микрочип процесор" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Микрочип - основна компонента на четвртата генерација компјутери</p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <h3>🚀 Иднина на компјутерите</h3>
+                        <p>Денес се развиваат и користат и компјутери од т.н. <strong>Петта генерација компјутери</strong>, кои имаат способност за <strong>паралелна работа</strong>.</p>
+                        <p>Исто така, се развива и <strong>Шеста генерација компјутери</strong> т.н. <strong>невронски компјутери</strong>, чија работа е слична со работата на невроните во човечкиот мозок и се очекува ова да биде идна генерација на компјутери.</p>
+                    </div>
+                </div>
+                <div class="chapter-nav">
+                    <button onclick="showSubChapter(1, 3)">← Претходно подпоглавје</button>
+                    <button onclick="showSubChapter(1, 5)">Следно подпоглавје →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChapter = 0;
+        let currentSubChapter = 0;
+        const totalChapters = 2;
+
+        function showChapter(chapterIndex) {
+            // Hide all chapters and subchapters
+            const chapters = document.querySelectorAll('.chapter');
+            chapters.forEach(chapter => chapter.classList.remove('active'));
+            
+            // Show selected chapter
+            document.getElementById(`chapter${chapterIndex}`).classList.add('active');
+            
+            // Update navigation buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            navButtons[chapterIndex].classList.add('active');
+            
+            // Update progress
+            currentChapter = chapterIndex;
+            currentSubChapter = 0;
+            updateProgress();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showSubChapter(chapterIndex, subChapterIndex) {
+            // Hide all chapters and subchapters
+            const chapters = document.querySelectorAll('.chapter');
+            chapters.forEach(chapter => chapter.classList.remove('active'));
+            
+            // Show selected subchapter
+            document.getElementById(`subchapter${chapterIndex}-${subChapterIndex}`).classList.add('active');
+            
+            // Update navigation buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            navButtons[chapterIndex + subChapterIndex].classList.add('active');
+            
+            // Update progress
+            currentChapter = chapterIndex;
+            currentSubChapter = subChapterIndex;
+            updateProgress();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            let progressPercentage = 0;
+            let progressTextContent = '';
+            
+            if (currentChapter === 0) {
+                progressPercentage = 0;
+                progressTextContent = 'Содржина';
+            } else if (currentSubChapter === 0) {
+                progressPercentage = (currentChapter / (totalChapters + 1)) * 100;
+                progressTextContent = `Поглавје ${currentChapter}`;
+            } else {
+                progressPercentage = ((currentChapter - 1) * 4 + currentSubChapter) / (totalChapters * 4) * 100;
+                progressTextContent = `Поглавје ${currentChapter}.${currentSubChapter}`;
+            }
+            
+            progressFill.style.width = progressPercentage + '%';
+            progressText.textContent = progressTextContent;
+        }
+
+        // Initialize
+        updateProgress();
+
+        // Matching Game Functionality
+        let draggedElement = null;
+        let gameCompleted = false;
+
+        // Fill-in-the-blank Activity Functionality
+        const fillCorrectAnswers = {
+            1: "компјутери",
+            2: "тројански коњ", 
+            3: "антивирус",
+            4: "Црв"
+        };
+
+        let fillUserAnswers = {};
+        let fillCorrectCount = 0;
+
+        // Add event listeners for drag and drop
+        document.addEventListener('DOMContentLoaded', function() {
+            setupMatchingGame();
+        });
+
+        function setupMatchingGame() {
+            const draggableTerms = document.querySelectorAll('.draggable-term');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            // Add drag event listeners to terms
+            draggableTerms.forEach(term => {
+                term.addEventListener('dragstart', handleDragStart);
+                term.addEventListener('dragend', handleDragEnd);
+            });
+
+            // Add drop event listeners to zones
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragenter', handleDragEnter);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '1';
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.style.backgroundColor = '#d5dbdb';
+            this.style.borderColor = '#3498db';
+        }
+
+        function handleDragLeave(e) {
+            this.style.backgroundColor = '#ecf0f1';
+            this.style.borderColor = '#bdc3c7';
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            this.style.backgroundColor = '#ecf0f1';
+            this.style.borderColor = '#bdc3c7';
+
+            if (draggedElement && !this.querySelector('.draggable-term')) {
+                // Remove from original position
+                const originalParent = draggedElement.parentNode;
+                
+                // Add to drop zone
+                this.appendChild(draggedElement);
+                draggedElement.style.margin = '0';
+                draggedElement.style.width = '100%';
+                
+                // Check if all terms are placed
+                checkIfGameComplete();
+            }
+
+            return false;
+        }
+
+        function checkIfGameComplete() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let placedTerms = 0;
+            
+            dropZones.forEach(zone => {
+                if (zone.querySelector('.draggable-term')) {
+                    placedTerms++;
+                }
+            });
+            
+            if (placedTerms === 5) {
+                document.getElementById('gameResult').innerHTML = 
+                    '<div style="color: #3498db;">🎯 Сите термини се поставени! Кликнете "Провери одговори" за да видите колку точни се.</div>';
+            }
+        }
+
+        function checkAnswers() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let correctAnswers = 0;
+            let totalAnswers = 0;
+
+            dropZones.forEach(zone => {
+                const placedTerm = zone.querySelector('.draggable-term');
+                if (placedTerm) {
+                    totalAnswers++;
+                    const termType = placedTerm.getAttribute('data-term');
+                    const correctAnswer = zone.getAttribute('data-answer');
+                    
+                    if (termType === correctAnswer) {
+                        correctAnswers++;
+                        zone.style.backgroundColor = '#d5f4e6';
+                        zone.style.borderColor = '#27ae60';
+                        placedTerm.style.backgroundColor = '#27ae60';
+                    } else {
+                        zone.style.backgroundColor = '#fadbd8';
+                        zone.style.borderColor = '#e74c3c';
+                        placedTerm.style.backgroundColor = '#e74c3c';
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById('gameResult');
+            if (totalAnswers === 0) {
+                resultDiv.innerHTML = '<div style="color: #e67e22;">⚠️ Прво поставете ги термините во соодветните полиња!</div>';
+            } else if (correctAnswers === 5) {
+                resultDiv.innerHTML = '<div style="color: #27ae60;">🎉 Одлично! Сите одговори се точни! Совршено ги знаете штетните програми!</div>';
+                gameCompleted = true;
+            } else {
+                resultDiv.innerHTML = `<div style="color: #e67e22;">📊 Резултат: ${correctAnswers}/5 точни одговори. ${correctAnswers < 3 ? 'Обидете се повторно!' : 'Добро, но можете подобро!'}</div>`;
+            }
+        }
+
+        function resetGame() {
+            // Reset all drop zones
+            const dropZones = document.querySelectorAll('.drop-zone');
+            dropZones.forEach(zone => {
+                zone.style.backgroundColor = '#ecf0f1';
+                zone.style.borderColor = '#bdc3c7';
+                
+                const placedTerm = zone.querySelector('.draggable-term');
+                if (placedTerm) {
+                    document.getElementById('terms').appendChild(placedTerm);
+                    placedTerm.style.margin = '';
+                    placedTerm.style.width = '';
+                }
+            });
+
+            // Reset all terms to original colors
+            const terms = document.querySelectorAll('.draggable-term');
+            terms.forEach((term, index) => {
+                const colors = ['#e74c3c', '#e67e22', '#9b59b6', '#34495e', '#27ae60'];
+                term.style.backgroundColor = colors[index];
+            });
+
+            // Clear result
+            document.getElementById('gameResult').innerHTML = '';
+            gameCompleted = false;
+        }
+
+        // Fill-in-the-blank functions
+        function checkFillAnswer(dropdownNumber) {
+            const dropdown = document.getElementById(`fillDropdown${dropdownNumber}`);
+            const selectedValue = dropdown.value;
+            
+            // Store user's answer
+            fillUserAnswers[dropdownNumber] = selectedValue;
+            
+            // Remove previous styling
+            dropdown.style.backgroundColor = '#3498db';
+            
+            if (selectedValue === fillCorrectAnswers[dropdownNumber]) {
+                dropdown.style.backgroundColor = '#27ae60';
+                setTimeout(() => {
+                    dropdown.style.backgroundColor = '#3498db';
+                }, 1000);
+            } else if (selectedValue !== "") {
+                dropdown.style.backgroundColor = '#e74c3c';
+                setTimeout(() => {
+                    dropdown.style.backgroundColor = '#3498db';
+                }, 1000);
+            }
+            
+            updateFillProgress();
+        }
+
+        function updateFillProgress() {
+            fillCorrectCount = 0;
+            for (let i = 1; i <= 4; i++) {
+                if (fillUserAnswers[i] === fillCorrectAnswers[i]) {
+                    fillCorrectCount++;
+                }
+            }
+            
+            const progressFill = document.getElementById('fillProgressFill');
+            const scoreText = document.getElementById('fillScoreText');
+            
+            const percentage = (fillCorrectCount / 4) * 100;
+            progressFill.style.width = percentage + '%';
+            scoreText.textContent = `${fillCorrectCount}/4 точни одговори`;
+        }
+
+        function checkAllFillAnswers() {
+            const resultDiv = document.getElementById('fillResult');
+            let allAnswered = true;
+            
+            // Check if all dropdowns have selections
+            for (let i = 1; i <= 4; i++) {
+                const dropdown = document.getElementById(`fillDropdown${i}`);
+                if (!dropdown.value) {
+                    allAnswered = false;
+                    dropdown.style.backgroundColor = '#e74c3c';
+                    setTimeout(() => {
+                        dropdown.style.backgroundColor = '#3498db';
+                    }, 1000);
+                }
+            }
+            
+            if (!allAnswered) {
+                resultDiv.style.color = '#e74c3c';
+                resultDiv.innerHTML = '⚠️ Ве молиме дополнете ги сите реченици пред да проверите!';
+                resultDiv.style.display = 'block';
+                return;
+            }
+            
+            // Count correct answers and style dropdowns
+            fillCorrectCount = 0;
+            for (let i = 1; i <= 4; i++) {
+                const dropdown = document.getElementById(`fillDropdown${i}`);
+                
+                if (fillUserAnswers[i] === fillCorrectAnswers[i]) {
+                    fillCorrectCount++;
+                    dropdown.style.backgroundColor = '#27ae60';
+                } else {
+                    dropdown.style.backgroundColor = '#e74c3c';
+                }
+            }
+            
+            // Show result
+            resultDiv.style.display = 'block';
+            
+            if (fillCorrectCount === 4) {
+                resultDiv.style.color = '#27ae60';
+                resultDiv.innerHTML = '🎉 Одлично! Сите одговори се точни! Совршено ги знаете штетните програми!';
+            } else if (fillCorrectCount >= 2) {
+                resultDiv.style.color = '#f39c12';
+                resultDiv.innerHTML = `📊 Добро! ${fillCorrectCount} од 4 одговори се точни. Обидете се да ги поправите неточните.`;
+            } else {
+                resultDiv.style.color = '#e74c3c';
+                resultDiv.innerHTML = `📚 Потребно е повеќе учење. Само ${fillCorrectCount} од 4 одговори се точни. Прочитајте ја лекцијата повторно.`;
+            }
+            
+            updateFillProgress();
+        }
+
+        function resetFillActivity() {
+            // Reset all dropdowns
+            for (let i = 1; i <= 4; i++) {
+                const dropdown = document.getElementById(`fillDropdown${i}`);
+                dropdown.value = "";
+                dropdown.style.backgroundColor = '#3498db';
+            }
+            
+            // Reset variables
+            fillUserAnswers = {};
+            fillCorrectCount = 0;
+            
+            // Hide result
+            document.getElementById('fillResult').style.display = 'none';
+            
+            // Reset progress
+            updateFillProgress();
+        }
+
+        // License Activity Functions
+        function saveLicenseResponse() {
+            const textarea = document.getElementById('licenseActivity');
+            const response = textarea.value.trim();
+            const resultDiv = document.getElementById('licenseResult');
+            
+            if (response.length < 10) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#e74c3c';
+                resultDiv.innerHTML = '⚠️ Ве молиме напишете подетален одговор (најмалку 10 карактери).';
+                return;
+            }
+            
+            // Save to localStorage (simulating saving)
+            localStorage.setItem('licenseActivityResponse', response);
+            
+            resultDiv.style.display = 'block';
+            resultDiv.style.color = '#27ae60';
+            resultDiv.innerHTML = '✅ Вашиот одговор е успешно зачуван! Одлична работа со размислувањето за лиценците!';
+            
+            // Add some visual feedback
+            textarea.style.borderColor = '#27ae60';
+            setTimeout(() => {
+                textarea.style.borderColor = '#3498db';
+            }, 2000);
+        }
+
+        function clearLicenseResponse() {
+            const textarea = document.getElementById('licenseActivity');
+            const resultDiv = document.getElementById('licenseResult');
+            
+            textarea.value = '';
+            resultDiv.style.display = 'none';
+            
+            // Remove from localStorage
+            localStorage.removeItem('licenseActivityResponse');
+            
+            // Visual feedback
+            textarea.style.borderColor = '#e67e22';
+            setTimeout(() => {
+                textarea.style.borderColor = '#3498db';
+            }, 1000);
+        }
+
+        // Load saved response when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupMatchingGame();
+            setupQuizMatchingGame();
+            
+            // Load saved license activity response
+            const savedResponse = localStorage.getItem('licenseActivityResponse');
+            if (savedResponse) {
+                const textarea = document.getElementById('licenseActivity');
+                if (textarea) {
+                    textarea.value = savedResponse;
+                }
+            }
+            
+            // Add quiz progress tracking
+            setupQuizProgressTracking();
+        });
+
+        // Quiz functionality
+        const quizAnswers = {
+            q1: 'b',    // ENIAC - Прв електронски компјутер
+            q2: 'b',    // Тројански коњ
+            q3: 'транзистори',  // Втора генерација
+            q4: 'b',    // Open-Source - бесплатен и може да се менува
+            q5: 'matching', // Matching question
+            q6: 'b',    // ENIAC - 18.000 лампи
+            q7: 'true', // Рансомвер - точно
+            q8: 'Apple I', // Прв персонален компјутер
+            q9: 'b',    // Shareware - пробна верзија
+            q10: 'b',   // ВИ - технологија за учење
+            q11: 'true', // Црвите - точно
+            q12: '7',   // ENIAC се расипувал на 7 минути
+            q13: 'b',   // Mozilla Firefox - Open-Source
+            q14: 'c',   // ENIAC - 30 тони
+            q15: 'true' // Трета генерација - интегрalno коло
+        };
+
+        let quizMatchingDraggedElement = null;
+
+        function setupQuizMatchingGame() {
+            const matchItems = document.querySelectorAll('.match-item');
+            const matchZones = document.querySelectorAll('.match-zone');
+
+            matchItems.forEach(item => {
+                item.addEventListener('dragstart', handleQuizMatchDragStart);
+                item.addEventListener('dragend', handleQuizMatchDragEnd);
+            });
+
+            matchZones.forEach(zone => {
+                zone.addEventListener('dragover', handleQuizMatchDragOver);
+                zone.addEventListener('drop', handleQuizMatchDrop);
+                zone.addEventListener('dragenter', handleQuizMatchDragEnter);
+                zone.addEventListener('dragleave', handleQuizMatchDragLeave);
+            });
+        }
+
+        function handleQuizMatchDragStart(e) {
+            quizMatchingDraggedElement = this;
+            this.style.opacity = '0.5';
+        }
+
+        function handleQuizMatchDragEnd(e) {
+            this.style.opacity = '1';
+        }
+
+        function handleQuizMatchDragOver(e) {
+            e.preventDefault();
+            return false;
+        }
+
+        function handleQuizMatchDragEnter(e) {
+            this.style.backgroundColor = '#d5dbdb';
+            this.style.borderColor = '#3498db';
+        }
+
+        function handleQuizMatchDragLeave(e) {
+            this.style.backgroundColor = '#ecf0f1';
+            this.style.borderColor = '#bdc3c7';
+        }
+
+        function handleQuizMatchDrop(e) {
+            e.stopPropagation();
+            this.style.backgroundColor = '#ecf0f1';
+            this.style.borderColor = '#bdc3c7';
+
+            if (quizMatchingDraggedElement && !this.querySelector('.match-item')) {
+                this.appendChild(quizMatchingDraggedElement);
+                quizMatchingDraggedElement.style.margin = '0';
+                quizMatchingDraggedElement.style.width = '100%';
+            }
+            return false;
+        }
+
+        function setupQuizProgressTracking() {
+            // Add event listeners to all quiz inputs
+            const radioInputs = document.querySelectorAll('input[type="radio"]');
+            const textInputs = document.querySelectorAll('#q3, #q8, #q12');
+            
+            radioInputs.forEach(input => {
+                input.addEventListener('change', updateQuizProgress);
+            });
+            
+            textInputs.forEach(input => {
+                input.addEventListener('input', updateQuizProgress);
+            });
+        }
+
+        function updateQuizProgress() {
+            let answeredQuestions = 0;
+            
+            // Check radio button questions
+            for (let i = 1; i <= 15; i++) {
+                if (i === 3 || i === 5 || i === 8 || i === 12) continue; // Skip fill-in and matching
+                
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                for (let radio of radios) {
+                    if (radio.checked) {
+                        answeredQuestions++;
+                        break;
+                    }
+                }
+            }
+            
+            // Check fill-in questions
+            const fillIns = ['q3', 'q8', 'q12'];
+            fillIns.forEach(id => {
+                const input = document.getElementById(id);
+                if (input && input.value.trim() !== '') {
+                    answeredQuestions++;
+                }
+            });
+            
+            // Check matching question
+            const matchZones = document.querySelectorAll('.match-zone');
+            let matchedItems = 0;
+            matchZones.forEach(zone => {
+                if (zone.querySelector('.match-item')) {
+                    matchedItems++;
+                }
+            });
+            if (matchedItems === 3) {
+                answeredQuestions++;
+            }
+            
+            // Update progress display
+            const progressText = document.getElementById('quizProgress');
+            const progressBar = document.getElementById('quizProgressBar');
+            
+            progressText.textContent = `${answeredQuestions}/15 прашања одговорени`;
+            progressBar.style.width = `${(answeredQuestions / 15) * 100}%`;
+        }
+
+        function checkQuiz() {
+            let score = 0;
+            let totalQuestions = 15;
+            const results = [];
+            
+            // Check multiple choice questions
+            const mcQuestions = [1, 2, 4, 6, 7, 9, 10, 11, 13, 14, 15];
+            mcQuestions.forEach(qNum => {
+                const selected = document.querySelector(`input[name="q${qNum}"]:checked`);
+                if (selected && selected.value === quizAnswers[`q${qNum}`]) {
+                    score++;
+                    results.push({question: qNum, correct: true});
+                } else {
+                    results.push({question: qNum, correct: false, selected: selected ? selected.value : null});
+                }
+            });
+            
+            // Check fill-in questions
+            const q3Answer = document.getElementById('q3').value.trim().toLowerCase();
+            if (q3Answer === 'транзистори' || q3Answer === 'транзистор') {
+                score++;
+                results.push({question: 3, correct: true});
+            } else {
+                results.push({question: 3, correct: false, answer: q3Answer});
+            }
+            
+            const q8Answer = document.getElementById('q8').value.trim();
+            if (q8Answer.toLowerCase().includes('apple') && q8Answer.toLowerCase().includes('i')) {
+                score++;
+                results.push({question: 8, correct: true});
+            } else {
+                results.push({question: 8, correct: false, answer: q8Answer});
+            }
+            
+            const q12Answer = document.getElementById('q12').value.trim();
+            if (q12Answer === '7') {
+                score++;
+                results.push({question: 12, correct: true});
+            } else {
+                results.push({question: 12, correct: false, answer: q12Answer});
+            }
+            
+            // Check matching question
+            const matchZones = document.querySelectorAll('.match-zone');
+            let matchingCorrect = 0;
+            matchZones.forEach(zone => {
+                const placedItem = zone.querySelector('.match-item');
+                if (placedItem) {
+                    const itemType = placedItem.getAttribute('data-match');
+                    const correctAnswer = zone.getAttribute('data-answer');
+                    if (itemType === correctAnswer) {
+                        matchingCorrect++;
+                        zone.style.backgroundColor = '#d5f4e6';
+                        zone.style.borderColor = '#27ae60';
+                    } else {
+                        zone.style.backgroundColor = '#fadbd8';
+                        zone.style.borderColor = '#e74c3c';
+                    }
+                }
+            });
+            
+            if (matchingCorrect === 3) {
+                score++;
+                results.push({question: 5, correct: true});
+            } else {
+                results.push({question: 5, correct: false});
+            }
+            
+            // Display results
+            displayQuizResults(score, totalQuestions, results);
+        }
+
+        function displayQuizResults(score, total, results) {
+            const resultsDiv = document.getElementById('quizResults');
+            const scoreDiv = document.getElementById('quizScore');
+            const feedbackDiv = document.getElementById('quizFeedback');
+            const gradeDiv = document.getElementById('quizGrade');
+            
+            const percentage = Math.round((score / total) * 100);
+            
+            scoreDiv.textContent = `Резултат: ${score}/${total} точни одговори (${percentage}%)`;
+            
+            // Highlight wrong answers in red
+            highlightWrongAnswers(results);
+            
+            // Determine grade and feedback
+            let grade, feedback, bgColor;
+            if (percentage >= 90) {
+                grade = "Одлично! 🌟";
+                feedback = "Совршено! Ги знаете сите теми од компјутерските технологии. Продолжете така!";
+                bgColor = "#d5f4e6";
+            } else if (percentage >= 80) {
+                grade = "Многу добро! 👍";
+                feedback = "Одлична работа! Имате солидно знаење, само малку повеќе внимание на деталите.";
+                bgColor = "#e8f5e8";
+            } else if (percentage >= 70) {
+                grade = "Добро! 📚";
+                feedback = "Добро знаење, но има простор за подобрување. Прегледајте ги темите каде грешите.";
+                bgColor = "#fff3cd";
+            } else if (percentage >= 60) {
+                grade = "Задоволително 📖";
+                feedback = "Основното знаење е тука, но потребно е повеќе учење за подобри резултати.";
+                bgColor = "#ffeaa7";
+            } else {
+                grade = "Потребно е повеќе учење 📝";
+                feedback = "Препорачуваме да ги прочитате повторно сите поглавја и да се обидете повторно.";
+                bgColor = "#fadbd8";
+            }
+            
+            feedbackDiv.textContent = feedback;
+            gradeDiv.textContent = grade;
+            resultsDiv.style.backgroundColor = bgColor;
+            resultsDiv.style.display = 'block';
+            
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function highlightWrongAnswers(results) {
+            results.forEach(result => {
+                const questionNum = result.question;
+                
+                if (!result.correct) {
+                    // Find the question container
+                    let questionContainer;
+                    
+                    if (questionNum === 3 || questionNum === 8 || questionNum === 12) {
+                        // Fill-in questions
+                        const input = document.getElementById(`q${questionNum}`);
+                        if (input) {
+                            input.style.borderColor = '#e74c3c';
+                            input.style.borderWidth = '3px';
+                            input.style.backgroundColor = '#fadbd8';
+                            
+                            // Find parent container and add red border
+                            questionContainer = input.closest('div[style*="background: white"]');
+                        }
+                    } else if (questionNum === 5) {
+                        // Matching question - already handled in checkQuiz function
+                        const matchingContainer = document.querySelector('#generations').closest('div[style*="background: white"]');
+                        if (matchingContainer) {
+                            matchingContainer.style.borderColor = '#e74c3c';
+                            matchingContainer.style.borderWidth = '3px';
+                        }
+                    } else {
+                        // Multiple choice questions
+                        const radios = document.querySelectorAll(`input[name="q${questionNum}"]`);
+                        if (radios.length > 0) {
+                            questionContainer = radios[0].closest('div[style*="background: white"]');
+                            
+                            // Highlight selected wrong answer
+                            const selectedRadio = document.querySelector(`input[name="q${questionNum}"]:checked`);
+                            if (selectedRadio) {
+                                const label = selectedRadio.closest('label');
+                                if (label) {
+                                    label.style.backgroundColor = '#fadbd8';
+                                    label.style.color = '#e74c3c';
+                                    label.style.fontWeight = 'bold';
+                                    label.style.padding = '5px';
+                                    label.style.borderRadius = '5px';
+                                    label.style.border = '2px solid #e74c3c';
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Add red border to question container
+                    if (questionContainer) {
+                        questionContainer.style.borderColor = '#e74c3c';
+                        questionContainer.style.borderWidth = '3px';
+                        questionContainer.style.borderStyle = 'solid';
+                    }
+                } else {
+                    // Highlight correct answers in green
+                    let questionContainer;
+                    
+                    if (questionNum === 3 || questionNum === 8 || questionNum === 12) {
+                        const input = document.getElementById(`q${questionNum}`);
+                        if (input) {
+                            input.style.borderColor = '#27ae60';
+                            input.style.borderWidth = '3px';
+                            input.style.backgroundColor = '#d5f4e6';
+                            questionContainer = input.closest('div[style*="background: white"]');
+                        }
+                    } else if (questionNum !== 5) {
+                        const selectedRadio = document.querySelector(`input[name="q${questionNum}"]:checked`);
+                        if (selectedRadio) {
+                            const label = selectedRadio.closest('label');
+                            if (label) {
+                                label.style.backgroundColor = '#d5f4e6';
+                                label.style.color = '#27ae60';
+                                label.style.fontWeight = 'bold';
+                                label.style.padding = '5px';
+                                label.style.borderRadius = '5px';
+                                label.style.border = '2px solid #27ae60';
+                            }
+                            questionContainer = selectedRadio.closest('div[style*="background: white"]');
+                        }
+                    }
+                    
+                    if (questionContainer) {
+                        questionContainer.style.borderColor = '#27ae60';
+                        questionContainer.style.borderWidth = '3px';
+                        questionContainer.style.borderStyle = 'solid';
+                    }
+                }
+            });
+        }
+
+        function resetQuiz() {
+            // Reset all radio buttons
+            const radioInputs = document.querySelectorAll('input[type="radio"]');
+            radioInputs.forEach(input => {
+                input.checked = false;
+            });
+            
+            // Reset fill-in inputs
+            document.getElementById('q3').value = '';
+            document.getElementById('q8').value = '';
+            document.getElementById('q12').value = '';
+            
+            // Reset matching game
+            const matchItems = document.querySelectorAll('.match-item');
+            const generationsDiv = document.getElementById('generations');
+            matchItems.forEach(item => {
+                generationsDiv.appendChild(item);
+                item.style.margin = '';
+                item.style.width = '';
+            });
+            
+            // Reset match zones
+            const matchZones = document.querySelectorAll('.match-zone');
+            matchZones.forEach(zone => {
+                zone.style.backgroundColor = '#ecf0f1';
+                zone.style.borderColor = '#bdc3c7';
+            });
+            
+            // Clear all highlighting from previous results
+            clearQuizHighlighting();
+            
+            // Hide results
+            document.getElementById('quizResults').style.display = 'none';
+            
+            // Reset progress
+            updateQuizProgress();
+            
+            // Scroll to top of quiz
+            document.getElementById('subchapter1-5').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearQuizHighlighting() {
+            // Clear question container borders
+            const questionContainers = document.querySelectorAll('#subchapter1-5 div[style*="background: white"]');
+            questionContainers.forEach(container => {
+                container.style.borderColor = '#e9ecef';
+                container.style.borderWidth = '2px';
+                container.style.borderStyle = 'solid';
+            });
+            
+            // Clear input field styling
+            const fillInputs = ['q3', 'q8', 'q12'];
+            fillInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.style.borderColor = '#3498db';
+                    input.style.borderWidth = '2px';
+                    input.style.backgroundColor = 'white';
+                }
+            });
+            
+            // Clear label highlighting
+            const labels = document.querySelectorAll('#subchapter1-5 label');
+            labels.forEach(label => {
+                label.style.backgroundColor = '';
+                label.style.color = '';
+                label.style.fontWeight = '';
+                label.style.padding = '';
+                label.style.borderRadius = '';
+                label.style.border = '';
+            });
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9676687df02ed0e4',t:'MTc1Mzg5NDc4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
